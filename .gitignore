@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+dist/
+*.egg-info/
+
+# Model files
+*.onnx
+*.plan
+*.engine
+*.wts
+
+# Logs and data
+logs/
+*.log
+recordings/
+test_videos/
+*.mp4
+*.avi
+*.mkv
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
