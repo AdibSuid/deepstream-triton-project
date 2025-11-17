@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  triton:
+    image: nvcr.io/nvidia/tritonserver:25.03-py3
+    container_name: triton
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - ./model_repository:/models
+      - ./logs:/logs
+    ports:
+      - "8000:8000"   # HTTP inference
+      - "8001:8001"   # GRPC inference
+      - "8002:8002"   # Prometheus metrics
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    command: >
+      tritonserver
+        --model-repository=/models
+        --strict-model-config=false
+        --log-verbose=1
+        --metrics-port=8002
+        --allow-grpc=true
+        --allow-http=true
+    restart: unless-stopped
+
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: mediamtx
+    volumes:
+      - ./recordings:/recordings
+    ports:
+      - "8554:8554"        # RTSP
+      - "1935:1935"        # RTMP
+      - "8888:8888"        # HLS
+      - "8889:8889"        # WebRTC
+    restart: unless-stopped
