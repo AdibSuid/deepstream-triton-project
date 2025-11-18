@@ -12,6 +12,7 @@ dist/
 *.egg-info/
 
 # Model files
+*.pt
 *.onnx
 *.plan
 *.engine
