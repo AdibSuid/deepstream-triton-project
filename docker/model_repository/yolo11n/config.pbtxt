@@ -1,6 +1,6 @@
 name: "yolo11n"
 platform: "tensorrt_plan"
-max_batch_size: 4
+max_batch_size: 1
 default_model_filename: "model.plan"
 
 input [
@@ -28,7 +28,7 @@ instance_group [
 ]
 
 dynamic_batching {
-  preferred_batch_size: [1, 2, 4]
+  preferred_batch_size: [1]
   max_queue_delay_microseconds: 100
 }
 
