@@ -14,12 +14,11 @@ nvbuf-memory-type=0
 [source0]
 enable=1
 type=4
-uri=rtsp://orinnano:orinnano@192.168.1.103:554/stream1
+uri=rtsp://localhost:8554/ds-test
 num-sources=1
 gpu-id=0
 cudadec-memtype=0
 latency=100
-rtsp-reconnect-interval-sec=10
 drop-frame-interval=0
 
 # Disable X display for Windows compatibility
@@ -31,14 +30,15 @@ source-id=0
 gpu-id=0
 nvbuf-memory-type=0
 
-# Disable RTSP output stream (encoder issues in container)
+# Disable RTSP output (encoder not accessible in Windows Docker)
 [sink1]
-enable=0
+enable=1
 type=4
 sync=0
-rtsp-port=8555
+rtsp-port=8554
 udp-port=5400
-codec=1
+codec=2
+bitrate=4000000
 
 # Fake sink for processing without display
 [sink2]
@@ -46,6 +46,15 @@ enable=1
 type=1
 sync=0
 qos=0
+
+# File sink for saving every frame
+[sink3]
+enable=0
+;type=3
+;sync=0
+;container=2
+;codec=0
+;output-file=/output/frame_%04d.jpg
 
 [osd]
 enable=1
@@ -82,6 +91,20 @@ tracker-height=384
 ll-lib-file=/opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
 ll-config-file=/configs/tracker_config.yml
 gpu-id=0
+display-tracking-id=1
 
 [tests]
 file-loop=0
+
+# Message converter for detection metadata
+[message-converter]
+enable=0
+;msg-conv-config=msgconv_config.txt
+;msg-conv-payload-type=0
+
+# Message broker for publishing detection data (MQTT example)
+[message-broker]
+enable=1
+proto-lib=/opt/nvidia/deepstream/deepstream/lib/libnvds_mqtt_proto.so
+conn-str=localhost;1883;username;password
+topic=deepstream-detections

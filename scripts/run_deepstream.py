@@ -106,7 +106,17 @@ if __name__ == "__main__":
     parser.add_argument("--srt-uri", type=str, help="SRT stream URI (e.g. srt://example:9000)")
     parser.add_argument("--fps", type=int, help="FPS (frames per second) or drop-frame-interval")
     parser.add_argument("--srt-passphrase", type=str, help="SRT passphrase for encrypted stream")
+    parser.add_argument("--srt-test", action="store_true", help="Test SRT connection manually using FFmpeg before running DeepStream.")
     args = parser.parse_args()
+    if args.srt_test:
+        srt_test_uri = args.srt_uri or "srt://0.0.0.0:9000?mode=listener&passphrase=UuX7jgf7yWYRa6aMQ6y6w_d7mTMVtaK4CNEqENeZ0Hg"
+        print(f"Testing SRT connection with FFmpeg: {srt_test_uri}")
+        try:
+            subprocess.run(["ffmpeg", "-y", "-i", srt_test_uri, "-c", "copy", "output.ts"], check=True)
+            print("✓ SRT connection test succeeded. Output written to output.ts")
+        except subprocess.CalledProcessError as e:
+            print(f"✗ SRT connection test failed: {e}")
+        sys.exit(0)
     # Pass passphrase via sys module for patching logic
     sys.srt_passphrase = args.srt_passphrase
     run_deepstream(args.config, srt_uri=args.srt_uri, fps=args.fps)
